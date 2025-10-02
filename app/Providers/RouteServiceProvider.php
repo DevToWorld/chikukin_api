@@ -52,7 +52,7 @@ class RouteServiceProvider extends ServiceProvider
             if (in_array($request->ip(), $ipWhitelist, true)) {
                 return Limit::none();
             }
-            $perMinute = (int) env('ADMIN_CMS_RATE_PER_MIN', 60); // default keeps current behavior
+            $perMinute = (int) env('ADMIN_CMS_RATE_PER_MIN', 180); // Increased from 60 to 180
             return Limit::perMinute($perMinute)->by($request->user()?->id ?: $request->ip());
         });
 
