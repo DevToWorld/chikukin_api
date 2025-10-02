@@ -25,7 +25,7 @@ class RouteServiceProvider extends ServiceProvider
     public function boot(): void
     {
         RateLimiter::for('api', function (Request $request) {
-            $perMinute = (int) env('API_RATE_LIMIT_PER_MIN', 60);
+            $perMinute = (int) env('API_RATE_LIMIT_PER_MIN', 120); // Increased from 60 to 120
             $id = $request->user()?->id ?: $request->ip();
             return Limit::perMinute($perMinute)->by($id);
         });
@@ -80,6 +80,16 @@ class RouteServiceProvider extends ServiceProvider
                 return Limit::none();
             }
             $perMinute = (int) env('ADMIN_OVERRIDES_RATE_PER_MIN', 20);
+            return Limit::perMinute($perMinute)->by($request->user()?->id ?: $request->ip());
+        });
+
+        // Member endpoints: allow higher limits for authenticated users
+        RateLimiter::for('member', function (Request $request) {
+            $ipWhitelist = array_filter(array_map('trim', explode(',', (string) env('ADMIN_RATE_IP_WHITELIST', ''))));
+            if (in_array($request->ip(), $ipWhitelist, true)) {
+                return Limit::none();
+            }
+            $perMinute = (int) env('MEMBER_RATE_LIMIT_PER_MIN', 300); // 5x higher than default API
             return Limit::perMinute($perMinute)->by($request->user()?->id ?: $request->ip());
         });
 

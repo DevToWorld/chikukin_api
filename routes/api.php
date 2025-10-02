@@ -477,7 +477,7 @@ Route::prefix('inquiries-v2')->group(function () {
 });
 
 // 会員アクセス権限API
-Route::prefix('member')->middleware('auth:sanctum')->group(function () {
+Route::prefix('member')->middleware(['auth:sanctum', 'throttle:member'])->group(function () {
     Route::get('/can-access/{type}/{id}', [MemberAccessController::class, 'canAccess']);
     Route::post('/log-access', [MemberAccessController::class, 'logAccess']);
     Route::get('/download-history', [MemberAccessController::class, 'downloadHistory']);

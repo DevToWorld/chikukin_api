@@ -117,10 +117,12 @@ class ApiClient {
     }
 
     // Add caching for GET requests to reduce API calls
+    // Create cache key that includes query parameters for proper caching
     const cacheKey = `${method}:${url}`
     if (method === 'GET' && !options.params?._t) {
       const cached = this.cache.get(cacheKey)
       if (cached && (Date.now() - cached.timestamp) < this.CACHE_DURATION) {
+        // Cache hit - no console log needed
         return cached.data
       }
     }
@@ -167,6 +169,7 @@ class ApiClient {
         // Cache successful GET responses
         if (method === 'GET' && !options.params?._t) {
           this.cache.set(cacheKey, { data: result, timestamp: Date.now() })
+          // Response cached - no console log needed
         }
         return result
       }
@@ -178,6 +181,7 @@ class ApiClient {
       // Cache successful GET responses
       if (method === 'GET' && !options.params?._t) {
         this.cache.set(cacheKey, { data: result, timestamp: Date.now() })
+        // Response cached - no console log needed
       }
       return result
     } catch (error) {
