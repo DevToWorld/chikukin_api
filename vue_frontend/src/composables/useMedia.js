@@ -105,12 +105,29 @@ function writePersistentCache(images) {
   } catch (_) {}
 }
 
+// Request deduplication - prevent multiple simultaneous calls
+let _loadPromise = null
+
 async function loadMedia() {
   hookStorageBroadcast()
   if (state.loaded || state.loading) return
+  
+  // If already loading, return the existing promise
+  if (_loadPromise) return _loadPromise
+  
   state.loading = true
   state.error = null
+  
+  _loadPromise = _doLoadMedia()
+  try {
+    await _loadPromise
+  } finally {
+    _loadPromise = null
+    state.loading = false
+  }
+}
 
+async function _doLoadMedia() {
   // Helper: normalize/resolve URLs in the map
   const normalize = (images) => {
     const out = {}
@@ -187,9 +204,12 @@ async function loadMedia() {
     // Avoid hitting admin endpoint when not authenticated to prevent spurious 404 logs
     if (apiClient.isAdminAuthenticated()) {
       // Only add cache-buster in production to avoid excessive requests
-      // Check both NODE_ENV and hostname to be more precise
+      // Only add cache-buster in true production (not localhost)
       const isProduction = process.env.NODE_ENV === 'production' && 
-                          (typeof window === 'undefined' || window.location.hostname !== 'localhost')
+                          (typeof window === 'undefined' || 
+                           (window.location.hostname !== 'localhost' && 
+                            !window.location.hostname.includes('127.0.0.1') &&
+                            !window.location.hostname.includes('local')))
       const params = isProduction ? { _t: Date.now() } : {}
       const adminPage = await apiClient.get('/api/admin/pages/media', { silent: true, params })
       const page = adminPage?.data?.page || adminPage?.data?.data?.page || adminPage?.page
@@ -213,10 +233,12 @@ async function loadMedia() {
 
   try {
     // 2) Public endpoint (published media page)
-    // Only add cache-buster in production to avoid excessive requests
-    // Check both NODE_ENV and hostname to be more precise
+    // Only add cache-buster in true production (not localhost)
     const isProduction = process.env.NODE_ENV === 'production' && 
-                        (typeof window === 'undefined' || window.location.hostname !== 'localhost')
+                        (typeof window === 'undefined' || 
+                         (window.location.hostname !== 'localhost' && 
+                          !window.location.hostname.includes('127.0.0.1') &&
+                          !window.location.hostname.includes('local')))
     const params = isProduction ? { _t: Date.now() } : {}
     const res = await apiClient.get('/api/public/pages/media', { silent: true, params })
     const page = res?.data?.page || res?.data?.data?.page
@@ -266,8 +288,6 @@ async function loadMedia() {
     } catch (err) {
       state.error = err?.message || 'Failed to load media registry'
     }
-  } finally {
-    state.loading = false
   }
 }
 

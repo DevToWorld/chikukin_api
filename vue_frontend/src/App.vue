@@ -44,7 +44,7 @@ export default {
       const isPreview = this._hasPreviewFlag()
       if (!isAdmin && !isPreview) return
       const now = Date.now()
-      if (this._refreshLock || (now - this._lastRefreshAt) < 3000) return
+      if (this._refreshLock || (now - this._lastRefreshAt) < 10000) return // Increased from 3s to 10s
       this._refreshLock = true
       try {
         await refreshLoadedPages({ preferAdmin: isAdmin })
