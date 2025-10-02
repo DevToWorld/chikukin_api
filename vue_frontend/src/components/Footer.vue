@@ -160,7 +160,7 @@ export default {
     try {
       const p = usePageText('footer')
       this._pageText = p
-      p.load({ force: true })
+      p.load({ force: false })
     } catch (e) { /* noop */ }
   }
 };

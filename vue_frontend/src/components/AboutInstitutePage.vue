@@ -197,7 +197,7 @@ export default {
     // Load CMS page text once
     try {
       this._pageText = usePageText(this.pageKey)
-      const opts = { force: true }
+      const opts = { force: false }
       try {
         const token = localStorage.getItem('admin_token')
         if (token && token.length > 0) opts.preferAdmin = true

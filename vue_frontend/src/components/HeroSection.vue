@@ -143,7 +143,7 @@ export default {
         })()
         if (hasAdminToken || previewFlag) {
           opts.preferAdmin = true
-          opts.force = true
+          opts.force = false
         }
         if (Object.keys(opts).length > 0) {
           await this._pageText.load(opts)

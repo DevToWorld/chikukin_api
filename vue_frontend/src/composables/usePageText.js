@@ -138,7 +138,10 @@ export function usePageText(pageKey) {
       if ((preferAdmin || isPreview || isEditing) && adminToken) {
         // Use admin endpoint for preview to bypass is_published filter
         // Only add cache-buster when force=true or in production to avoid excessive requests
-        const params = (force || process.env.NODE_ENV === 'production') ? { _t: Date.now() } : {}
+        // Check both NODE_ENV and hostname to be more precise
+        const isProduction = process.env.NODE_ENV === 'production' && 
+                            (typeof window === 'undefined' || window.location.hostname !== 'localhost')
+        const params = (force || isProduction) ? { _t: Date.now() } : {}
         res = await apiClient.get(`/api/admin/pages/${pageKey}`, { silent: true, params })
       } else {
         // Public endpoint for normal visitors - only cache-bust when force=true

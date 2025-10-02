@@ -187,7 +187,10 @@ async function loadMedia() {
     // Avoid hitting admin endpoint when not authenticated to prevent spurious 404 logs
     if (apiClient.isAdminAuthenticated()) {
       // Only add cache-buster in production to avoid excessive requests
-      const params = process.env.NODE_ENV === 'production' ? { _t: Date.now() } : {}
+      // Check both NODE_ENV and hostname to be more precise
+      const isProduction = process.env.NODE_ENV === 'production' && 
+                          (typeof window === 'undefined' || window.location.hostname !== 'localhost')
+      const params = isProduction ? { _t: Date.now() } : {}
       const adminPage = await apiClient.get('/api/admin/pages/media', { silent: true, params })
       const page = adminPage?.data?.page || adminPage?.data?.data?.page || adminPage?.page
       const images = page?.content?.images || null
@@ -211,7 +214,10 @@ async function loadMedia() {
   try {
     // 2) Public endpoint (published media page)
     // Only add cache-buster in production to avoid excessive requests
-    const params = process.env.NODE_ENV === 'production' ? { _t: Date.now() } : {}
+    // Check both NODE_ENV and hostname to be more precise
+    const isProduction = process.env.NODE_ENV === 'production' && 
+                        (typeof window === 'undefined' || window.location.hostname !== 'localhost')
+    const params = isProduction ? { _t: Date.now() } : {}
     const res = await apiClient.get('/api/public/pages/media', { silent: true, params })
     const page = res?.data?.page || res?.data?.data?.page
     const images = page?.content?.images || null

@@ -1258,8 +1258,11 @@ export default {
 
       try {
         // 管理APIから取得（未公開でも取得可能）
-        // Add cache-buster to avoid stale admin GET after updates
-        const res = await apiClient.request('GET', `/api/admin/pages/${this.pageKey}`, null, { silent: true, params: { _t: Date.now() } })
+        // Only add cache-buster in production to avoid excessive requests
+        const isProduction = process.env.NODE_ENV === 'production' && 
+                            (typeof window === 'undefined' || window.location.hostname !== 'localhost')
+        const params = isProduction ? { _t: Date.now() } : {}
+        const res = await apiClient.request('GET', `/api/admin/pages/${this.pageKey}`, null, { silent: true, params })
         const body = res?.data || res
         const page = body?.page || body?.data?.page || body
         if (!page) throw new Error('no page data')

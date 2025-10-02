@@ -104,7 +104,10 @@ export function usePageMedia() {
           }
 
           // Only add cache-buster when force=true AND in production to avoid excessive requests
-          const params = (force && process.env.NODE_ENV === 'production') ? { _t: Date.now() } : {}
+          // Check both NODE_ENV and hostname to be more precise
+          const isProduction = process.env.NODE_ENV === 'production' && 
+                              (typeof window === 'undefined' || window.location.hostname !== 'localhost')
+          const params = (force && isProduction) ? { _t: Date.now() } : {}
           const res = await apiClient.get(`/api/public/pages-v2/${slug}`, { silent: true, params })
 
           if (!res || res.success === false) {
