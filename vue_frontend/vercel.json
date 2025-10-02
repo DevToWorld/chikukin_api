@@ -1,0 +1,18 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://heroic-celebration-production.up.railway.app/api/:path*"
+    },
+    {
+      "source": "/storage/:path*",
+      "destination": "https://heroic-celebration-production.up.railway.app/storage/:path*"
+    },
+    {
+      "source": "/((?!.*\\.).*)",
+      "destination": "/index.html"
+    }
+  ],
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist"
+}

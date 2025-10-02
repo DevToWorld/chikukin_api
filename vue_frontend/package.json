@@ -1,0 +1,31 @@
+{
+  "name": "vue-package",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "start": "npx serve -s dist -l $PORT"
+  },
+  "dependencies": {
+    "@tiptap/core": "^2.26.1",
+    "@tiptap/pm": "^2.26.1",
+    "@tiptap/starter-kit": "^2.26.1",
+    "@tiptap/vue-2": "^2.26.1",
+    "axios": "^1.11.0",
+    "core-js": "^3.6.5",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "quill": "^2.0.3",
+    "serve": "^14.2.0",
+    "vue": "^2.6.11",
+    "vue-quill-editor": "^3.0.6",
+    "vue-router": "^3.5.2",
+    "vuex": "^3.6.2"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "~4.5.0",
+    "@vue/cli-service": "~4.5.0",
+    "vue-template-compiler": "^2.6.11"
+  }
+}

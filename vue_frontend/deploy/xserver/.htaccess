@@ -1,0 +1,13 @@
+RewriteEngine On
+RewriteBase /
+
+# Optional: Proxy /storage/* to API if API returns relative /storage paths.
+# If API returns absolute URLs (PUBLIC_STORAGE_URL set), you can remove this block.
+RewriteRule ^storage/(.*)$ https://api.example.com/storage/$1 [L,PT]
+
+# SPA fallback (Vue CLI build)
+RewriteRule ^index\.html$ - [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /index.html [L]
+

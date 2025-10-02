@@ -134,3 +134,25 @@ htmlcov/
 rr
 rr.exe
 .rr.yaml
+
+# Vue Frontend
+vue_frontend/node_modules/
+vue_frontend/dist/
+vue_frontend/.env.local
+vue_frontend/.env.*.local
+vue_frontend/.DS_Store
+vue_frontend/.vercel
+vue_frontend/.config/
+vue_frontend/*.pem
+vue_frontend/*.p12
+vue_frontend/*.p8
+vue_frontend/*.crt
+vue_frontend/*.key
+vue_frontend/*.der
+vue_frontend/*service-account*.json
+vue_frontend/*service_account*.json
+vue_frontend/*gcp-credentials*.json
+vue_frontend/*credentials*.json
+vue_frontend/*.secrets.json
+vue_frontend/.playwright-mcp/
+vue_frontend/.serena/

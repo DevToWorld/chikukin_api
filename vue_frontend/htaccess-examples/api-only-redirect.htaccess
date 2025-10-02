@@ -1,0 +1,19 @@
+# Example 2: Redirect only API requests to Laravel
+# This keeps your frontend separate from backend
+
+RewriteEngine On
+
+# Redirect /api/* requests to Laravel public directory
+RewriteRule ^api/(.*)$ laravel-backend/public/api/$1 [L,QSA]
+
+# Handle CORS for API endpoints
+<LocationMatch "^/api/">
+    Header always set Access-Control-Allow-Origin "*"
+    Header always set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, PATCH, OPTIONS"
+    Header always set Access-Control-Allow-Headers "DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization,X-CSRF-TOKEN,Accept"
+</LocationMatch>
+
+# Handle OPTIONS requests for API
+RewriteCond %{REQUEST_METHOD} OPTIONS
+RewriteRule ^api/(.*)$ laravel-backend/public/api/$1 [L,R=200]
+

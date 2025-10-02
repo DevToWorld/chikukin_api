@@ -1,0 +1,101 @@
+/* 会員制限表示用の共通スタイル */
+
+/* 制限されたコンテンツ */
+.restricted-content {
+  position: relative !important;
+  overflow: hidden;
+}
+
+/* インライン制限オーバーレイ */
+.restriction-overlay-inline {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  pointer-events: none;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.lock-icon {
+  font-size: 16px;
+}
+
+.restriction-text {
+  color: #333;
+}
+
+/* カード内の制限表示 */
+.publication-card.restricted,
+.seminar-card.restricted {
+  position: relative;
+}
+
+.publication-card.restricted .card-content,
+.seminar-card.restricted .card-content {
+  filter: blur(4px);
+  user-select: none;
+  pointer-events: none;
+}
+
+/* ボタンの制限表示 */
+.btn-restricted {
+  opacity: 0.5;
+  cursor: not-allowed !important;
+  position: relative;
+}
+
+.btn-restricted::after {
+  content: '🔒';
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+}
+
+/* 画像の制限表示 */
+.image-restricted {
+  position: relative;
+  overflow: hidden;
+}
+
+.image-restricted img {
+  filter: blur(8px);
+}
+
+.image-restricted::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* タイトルの軽いぼかし */
+.title-restricted {
+  filter: blur(1px);
+  user-select: none;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+  .restriction-overlay-inline {
+    font-size: 12px;
+    padding: 6px 12px;
+  }
+  
+  .lock-icon {
+    font-size: 14px;
+  }
+}

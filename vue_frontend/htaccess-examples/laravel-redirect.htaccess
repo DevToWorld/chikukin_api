@@ -1,0 +1,12 @@
+# Example 1: Redirect everything to Laravel public directory
+# Use this if Laravel backend is in 'laravel-backend' folder
+
+RewriteEngine On
+
+# Redirect all requests to Laravel public directory
+RewriteRule ^(.*)$ laravel-backend/public/$1 [L,QSA]
+
+# Handle OPTIONS requests for CORS
+RewriteCond %{REQUEST_METHOD} OPTIONS
+RewriteRule ^(.*)$ laravel-backend/public/$1 [L,R=200]
+

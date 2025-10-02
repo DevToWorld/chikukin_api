@@ -1,0 +1,45 @@
+# Exclude heavy/unnecessary files from Docker build context
+
+# VCS and editor
+.git
+.gitignore
+.gitattributes
+.vscode
+.idea
+**/.DS_Store
+
+# Root node artifacts
+node_modules
+npm-debug.log*
+pnpm-lock.yaml
+yarn.lock
+dist
+build
+.cache
+
+# Frontend build outputs
+public/*.map
+public/assets
+
+# Test and docs
+tests
+coverage
+**/*.spec.*
+**/*.test.*
+docs
+
+# Laravel backend heavy dirs and runtime files
+laravel-backend/node_modules
+laravel-backend/vendor
+laravel-backend/storage/logs
+laravel-backend/storage/framework/*
+laravel-backend/storage/app/public
+laravel-backend/public/storage
+
+# Local env files
+.env
+laravel-backend/.env
+
+# Misc
+**/*.log
+*.swp

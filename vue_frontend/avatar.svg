@@ -1,0 +1,35 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <!-- White background -->
+  <rect width="512" height="512" fill="white"/>
+  
+  <!-- Dot pattern grid -->
+  <circle cx="80" cy="80" r="4" fill="black"/>
+  <circle cx="160" cy="80" r="4" fill="black"/>
+  <circle cx="240" cy="80" r="4" fill="black"/>
+  <circle cx="320" cy="80" r="4" fill="black"/>
+  <circle cx="400" cy="80" r="4" fill="black"/>
+  
+  <circle cx="80" cy="160" r="4" fill="black"/>
+  <circle cx="160" cy="160" r="4" fill="black"/>
+  <circle cx="240" cy="160" r="4" fill="black"/>
+  <circle cx="320" cy="160" r="4" fill="black"/>
+  <circle cx="400" cy="160" r="4" fill="black"/>
+  
+  <circle cx="80" cy="240" r="4" fill="black"/>
+  <circle cx="160" cy="240" r="4" fill="black"/>
+  <circle cx="240" cy="240" r="4" fill="black"/>
+  <circle cx="320" cy="240" r="4" fill="black"/>
+  <circle cx="400" cy="240" r="4" fill="black"/>
+  
+  <circle cx="80" cy="320" r="4" fill="black"/>
+  <circle cx="160" cy="320" r="4" fill="black"/>
+  <circle cx="240" cy="320" r="4" fill="black"/>
+  <circle cx="320" cy="320" r="4" fill="black"/>
+  <circle cx="400" cy="320" r="4" fill="black"/>
+  
+  <circle cx="80" cy="400" r="4" fill="black"/>
+  <circle cx="160" cy="400" r="4" fill="black"/>
+  <circle cx="240" cy="400" r="4" fill="black"/>
+  <circle cx="320" cy="400" r="4" fill="black"/>
+  <circle cx="400" cy="400" r="4" fill="black"/>
+</svg>

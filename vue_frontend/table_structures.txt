@@ -1,0 +1,443 @@
+-- Table: admins
+                                            Table "public.admins"
+     Column      |              Type              | Collation | Nullable |              Default               
+-----------------+--------------------------------+-----------+----------+------------------------------------
+ id              | bigint                         |           | not null | nextval('admins_id_seq'::regclass)
+ username        | character varying(50)          |           | not null | 
+ email           | character varying(255)         |           | not null | 
+ password        | character varying(255)         |           | not null | 
+ full_name       | character varying(100)         |           | not null | 
+ role            | character varying(255)         |           | not null | 'admin'::character varying
+ is_active       | boolean                        |           | not null | true
+ last_login_at   | timestamp(0) without time zone |           |          | 
+ created_at      | timestamp(0) without time zone |           |          | 
+ updated_at      | timestamp(0) without time zone |           |          | 
+ failed_attempts | integer                        |           | not null | 0
+ locked_until    | timestamp(0) without time zone |           |          | 
+ mfa_enabled     | boolean                        |           | not null | false
+ mfa_secret      | character varying(255)         |           |          | 
+Indexes:
+    "admins_pkey" PRIMARY KEY, btree (id)
+    "admins_email_index" btree (email)
+    "admins_email_unique" UNIQUE CONSTRAINT, btree (email)
+    "admins_username_index" btree (username)
+    "admins_username_unique" UNIQUE CONSTRAINT, btree (username)
+Check constraints:
+    "admins_role_check" CHECK (role::text = ANY (ARRAY['super_admin'::character varying, 'admin'::character varying, 'editor'::character varying]::text[]))
+Referenced by:
+    TABLE "email_campaigns" CONSTRAINT "email_campaigns_created_by_fkey" FOREIGN KEY (created_by) REFERENCES admins(id) ON DELETE SET NULL
+    TABLE "mail_groups" CONSTRAINT "mail_groups_created_by_fkey" FOREIGN KEY (created_by) REFERENCES admins(id) ON DELETE SET NULL
+    TABLE "seminar_registrations" CONSTRAINT "seminar_registrations_approved_by_fkey" FOREIGN KEY (approved_by) REFERENCES admins(id) ON DELETE SET NULL
+    TABLE "seminars" CONSTRAINT "seminars_created_by_foreign" FOREIGN KEY (created_by) REFERENCES admins(id) ON DELETE SET NULL
+    TABLE "seminars" CONSTRAINT "seminars_updated_by_foreign" FOREIGN KEY (updated_by) REFERENCES admins(id) ON DELETE SET NULL
+
+
+-- Table: members
+                                               Table "public.members"
+        Column         |              Type              | Collation | Nullable |               Default               
+-----------------------+--------------------------------+-----------+----------+-------------------------------------
+ id                    | bigint                         |           | not null | nextval('members_id_seq'::regclass)
+ email                 | character varying(255)         |           | not null | 
+ password              | character varying(255)         |           | not null | 
+ company_name          | character varying(200)         |           | not null | 
+ representative_name   | character varying(100)         |           | not null | 
+ phone                 | character varying(20)          |           |          | 
+ postal_code           | character varying(10)          |           |          | 
+ address               | text                           |           |          | 
+ membership_type       | character varying(255)         |           | not null | 'basic'::character varying
+ status                | character varying(255)         |           | not null | 'pending'::character varying
+ joined_date           | date                           |           |          | 
+ expiry_date           | date                           |           |          | 
+ last_login_at         | timestamp(0) without time zone |           |          | 
+ email_verified_at     | timestamp(0) without time zone |           |          | 
+ created_at            | timestamp(0) without time zone |           |          | 
+ updated_at            | timestamp(0) without time zone |           |          | 
+ membership_expires_at | timestamp without time zone    |           |          | 
+ is_active             | boolean                        |           |          | true
+ position              | character varying(100)         |           |          | 
+ capital               | character varying(50)          |           |          | 
+ industry              | character varying(100)         |           |          | 
+ region                | character varying(50)          |           |          | 
+ concerns              | text                           |           |          | 
+ notes                 | text                           |           |          | 
+ started_at            | date                           |           |          | 
+ department            | character varying(100)         |           |          | 
+Indexes:
+    "members_pkey" PRIMARY KEY, btree (id)
+    "idx_members_is_active" btree (is_active)
+    "idx_members_membership_expires_at" btree (membership_expires_at)
+    "idx_members_membership_type" btree (membership_type)
+    "members_email_index" btree (email)
+    "members_email_unique" UNIQUE CONSTRAINT, btree (email)
+    "members_is_active_index" btree (is_active)
+    "members_membership_expires_at_index" btree (membership_expires_at)
+    "members_membership_type_index" btree (membership_type)
+    "members_status_index" btree (status)
+Check constraints:
+    "members_membership_type_check" CHECK (membership_type::text = ANY (ARRAY['free'::character varying, 'basic'::character varying, 'standard'::character varying, 'premium'::character varying]::text[]))
+    "members_status_check" CHECK (status::text = ANY (ARRAY['pending'::character varying, 'active'::character varying, 'suspended'::character varying, 'cancelled'::character varying]::text[]))
+Referenced by:
+    TABLE "content_access_logs" CONSTRAINT "content_access_logs_member_id_foreign" FOREIGN KEY (member_id) REFERENCES members(id) ON DELETE SET NULL
+    TABLE "email_recipients" CONSTRAINT "email_recipients_member_id_fkey" FOREIGN KEY (member_id) REFERENCES members(id) ON DELETE SET NULL
+    TABLE "mail_group_members" CONSTRAINT "mail_group_members_member_id_fkey" FOREIGN KEY (member_id) REFERENCES members(id) ON DELETE CASCADE
+    TABLE "member_favorites" CONSTRAINT "member_favorites_favorite_member_id_fkey" FOREIGN KEY (favorite_member_id) REFERENCES members(id) ON DELETE CASCADE
+    TABLE "member_favorites" CONSTRAINT "member_favorites_member_id_fkey" FOREIGN KEY (member_id) REFERENCES members(id) ON DELETE CASCADE
+    TABLE "membership_upgrades" CONSTRAINT "membership_upgrades_member_id_foreign" FOREIGN KEY (member_id) REFERENCES members(id) ON DELETE CASCADE
+    TABLE "seminar_favorites" CONSTRAINT "seminar_favorites_member_id_fkey" FOREIGN KEY (member_id) REFERENCES members(id) ON DELETE CASCADE
+    TABLE "seminar_registrations" CONSTRAINT "seminar_registrations_member_id_foreign" FOREIGN KEY (member_id) REFERENCES members(id) ON DELETE SET NULL
+
+
+-- Table: mail_groups
+                                         Table "public.mail_groups"
+   Column    |            Type             | Collation | Nullable |                 Default                 
+-------------+-----------------------------+-----------+----------+-----------------------------------------
+ id          | bigint                      |           | not null | nextval('mail_groups_id_seq'::regclass)
+ name        | character varying(255)      |           | not null | 
+ description | text                        |           |          | 
+ created_by  | bigint                      |           |          | 
+ created_at  | timestamp without time zone |           |          | now()
+ updated_at  | timestamp without time zone |           |          | now()
+Indexes:
+    "mail_groups_pkey" PRIMARY KEY, btree (id)
+    "idx_mail_groups_created_by" btree (created_by)
+Foreign-key constraints:
+    "mail_groups_created_by_fkey" FOREIGN KEY (created_by) REFERENCES admins(id) ON DELETE SET NULL
+Referenced by:
+    TABLE "mail_group_members" CONSTRAINT "mail_group_members_group_id_fkey" FOREIGN KEY (group_id) REFERENCES mail_groups(id) ON DELETE CASCADE
+
+
+-- Table: mail_group_members
+                                        Table "public.mail_group_members"
+   Column   |            Type             | Collation | Nullable |                    Default                     
+------------+-----------------------------+-----------+----------+------------------------------------------------
+ id         | bigint                      |           | not null | nextval('mail_group_members_id_seq'::regclass)
+ group_id   | bigint                      |           | not null | 
+ member_id  | bigint                      |           | not null | 
+ created_at | timestamp without time zone |           |          | now()
+Indexes:
+    "mail_group_members_pkey" PRIMARY KEY, btree (id)
+    "idx_mail_group_members_group_id" btree (group_id)
+    "idx_mail_group_members_member_id" btree (member_id)
+    "uq_mail_group_members_group_member" UNIQUE CONSTRAINT, btree (group_id, member_id)
+Foreign-key constraints:
+    "mail_group_members_group_id_fkey" FOREIGN KEY (group_id) REFERENCES mail_groups(id) ON DELETE CASCADE
+    "mail_group_members_member_id_fkey" FOREIGN KEY (member_id) REFERENCES members(id) ON DELETE CASCADE
+
+
+-- Table: email_campaigns
+                                         Table "public.email_campaigns"
+    Column    |            Type             | Collation | Nullable |                   Default                   
+--------------+-----------------------------+-----------+----------+---------------------------------------------
+ id           | bigint                      |           | not null | nextval('email_campaigns_id_seq'::regclass)
+ subject      | character varying(500)      |           | not null | 
+ body_html    | text                        |           |          | 
+ body_text    | text                        |           |          | 
+ status       | character varying(20)       |           |          | 'draft'::character varying
+ scheduled_at | timestamp without time zone |           |          | 
+ created_by   | bigint                      |           |          | 
+ created_at   | timestamp without time zone |           |          | now()
+ updated_at   | timestamp without time zone |           |          | now()
+ is_template  | boolean                     |           | not null | false
+Indexes:
+    "email_campaigns_pkey" PRIMARY KEY, btree (id)
+    "email_campaigns_is_template_index" btree (is_template)
+    "idx_email_campaigns_created_by" btree (created_by)
+    "idx_email_campaigns_scheduled_at" btree (scheduled_at)
+    "idx_email_campaigns_status" btree (status)
+Check constraints:
+    "email_campaigns_status_check" CHECK (status::text = ANY (ARRAY['draft'::character varying, 'scheduled'::character varying, 'sending'::character varying, 'sent'::character varying, 'failed'::character varying]::text[]))
+Foreign-key constraints:
+    "email_campaigns_created_by_fkey" FOREIGN KEY (created_by) REFERENCES admins(id) ON DELETE SET NULL
+Referenced by:
+    TABLE "email_attachments" CONSTRAINT "email_attachments_campaign_id_foreign" FOREIGN KEY (campaign_id) REFERENCES email_campaigns(id) ON DELETE CASCADE
+    TABLE "email_recipients" CONSTRAINT "email_recipients_campaign_id_fkey" FOREIGN KEY (campaign_id) REFERENCES email_campaigns(id) ON DELETE CASCADE
+
+
+-- Table: email_recipients
+                                         Table "public.email_recipients"
+   Column    |            Type             | Collation | Nullable |                   Default                    
+-------------+-----------------------------+-----------+----------+----------------------------------------------
+ id          | bigint                      |           | not null | nextval('email_recipients_id_seq'::regclass)
+ campaign_id | bigint                      |           | not null | 
+ email       | character varying(255)      |           | not null | 
+ member_id   | bigint                      |           |          | 
+ status      | character varying(20)       |           |          | 'pending'::character varying
+ sent_at     | timestamp without time zone |           |          | 
+ error       | text                        |           |          | 
+ created_at  | timestamp without time zone |           |          | now()
+ updated_at  | timestamp without time zone |           |          | now()
+Indexes:
+    "email_recipients_pkey" PRIMARY KEY, btree (id)
+    "idx_email_recipients_campaign_id" btree (campaign_id)
+    "idx_email_recipients_email" btree (email)
+    "idx_email_recipients_status" btree (status)
+Check constraints:
+    "email_recipients_status_check" CHECK (status::text = ANY (ARRAY['pending'::character varying, 'sent'::character varying, 'failed'::character varying]::text[]))
+Foreign-key constraints:
+    "email_recipients_campaign_id_fkey" FOREIGN KEY (campaign_id) REFERENCES email_campaigns(id) ON DELETE CASCADE
+    "email_recipients_member_id_fkey" FOREIGN KEY (member_id) REFERENCES members(id) ON DELETE SET NULL
+
+
+-- Table: member_favorites
+                                            Table "public.member_favorites"
+       Column       |            Type             | Collation | Nullable |                   Default                    
+--------------------+-----------------------------+-----------+----------+----------------------------------------------
+ id                 | bigint                      |           | not null | nextval('member_favorites_id_seq'::regclass)
+ member_id          | bigint                      |           | not null | 
+ favorite_member_id | bigint                      |           | not null | 
+ created_at         | timestamp without time zone |           |          | now()
+Indexes:
+    "member_favorites_pkey" PRIMARY KEY, btree (id)
+    "idx_member_favorites_favorite_member_id" btree (favorite_member_id)
+    "idx_member_favorites_member_id" btree (member_id)
+    "uq_member_favorites_member_favorite" UNIQUE CONSTRAINT, btree (member_id, favorite_member_id)
+Check constraints:
+    "chk_member_favorites_not_self" CHECK (member_id <> favorite_member_id)
+Foreign-key constraints:
+    "member_favorites_favorite_member_id_fkey" FOREIGN KEY (favorite_member_id) REFERENCES members(id) ON DELETE CASCADE
+    "member_favorites_member_id_fkey" FOREIGN KEY (member_id) REFERENCES members(id) ON DELETE CASCADE
+
+
+-- Table: seminar_favorites
+                                        Table "public.seminar_favorites"
+   Column   |            Type             | Collation | Nullable |                    Default                    
+------------+-----------------------------+-----------+----------+-----------------------------------------------
+ id         | bigint                      |           | not null | nextval('seminar_favorites_id_seq'::regclass)
+ member_id  | bigint                      |           |          | 
+ seminar_id | bigint                      |           |          | 
+ created_at | timestamp without time zone |           |          | CURRENT_TIMESTAMP
+Indexes:
+    "seminar_favorites_pkey" PRIMARY KEY, btree (id)
+    "idx_seminar_favorites_member_id" btree (member_id)
+    "idx_seminar_favorites_seminar_id" btree (seminar_id)
+    "seminar_favorites_member_id_seminar_id_key" UNIQUE CONSTRAINT, btree (member_id, seminar_id)
+Foreign-key constraints:
+    "seminar_favorites_member_id_fkey" FOREIGN KEY (member_id) REFERENCES members(id) ON DELETE CASCADE
+    "seminar_favorites_seminar_id_fkey" FOREIGN KEY (seminar_id) REFERENCES seminars(id) ON DELETE CASCADE
+
+
+-- Table: regions
+                                   Table "public.regions"
+ Column |         Type          | Collation | Nullable |               Default               
+--------+-----------------------+-----------+----------+-------------------------------------
+ id     | integer               |           | not null | nextval('regions_id_seq'::regclass)
+ name   | character varying(50) |           | not null | 
+ code   | character varying(10) |           | not null | 
+Indexes:
+    "regions_pkey" PRIMARY KEY, btree (id)
+    "regions_code_key" UNIQUE CONSTRAINT, btree (code)
+
+
+-- Table: industries
+                                    Table "public.industries"
+ Column |          Type          | Collation | Nullable |                Default                 
+--------+------------------------+-----------+----------+----------------------------------------
+ id     | integer                |           | not null | nextval('industries_id_seq'::regclass)
+ name   | character varying(100) |           | not null | 
+ code   | character varying(20)  |           | not null | 
+Indexes:
+    "industries_pkey" PRIMARY KEY, btree (id)
+    "industries_code_key" UNIQUE CONSTRAINT, btree (code)
+
+
+-- Table: economic_reports
+                                                Table "public.economic_reports"
+      Column      |              Type              | Collation | Nullable |                       Default                       
+------------------+--------------------------------+-----------+----------+-----------------------------------------------------
+ id               | bigint                         |           | not null | nextval('economic_reports_id_seq'::regclass)
+ title            | character varying(255)         |           | not null | 
+ description      | text                           |           |          | 
+ category         | character varying(255)         |           | not null | 
+ year             | integer                        |           | not null | 
+ publication_date | date                           |           | not null | 
+ author           | character varying(255)         |           | not null | 'ちくぎん地域経済研究所'::character varying
+ publisher        | character varying(255)         |           | not null | '株式会社ちくぎん地域経済研究所'::character varying
+ keywords         | text                           |           |          | 
+ cover_image      | character varying(255)         |           |          | 
+ file_url         | character varying(255)         |           |          | 
+ file_size        | numeric(8,2)                   |           |          | 
+ pages            | integer                        |           | not null | 0
+ is_downloadable  | boolean                        |           | not null | true
+ members_only     | boolean                        |           | not null | true
+ is_featured      | boolean                        |           | not null | false
+ is_published     | boolean                        |           | not null | false
+ download_count   | integer                        |           | not null | 0
+ sort_order       | integer                        |           | not null | 0
+ created_at       | timestamp(0) without time zone |           |          | 
+ updated_at       | timestamp(0) without time zone |           |          | 
+Indexes:
+    "economic_reports_pkey" PRIMARY KEY, btree (id)
+    "economic_reports_category_index" btree (category)
+    "economic_reports_category_year_index" btree (category, year)
+    "economic_reports_is_featured_index" btree (is_featured)
+    "economic_reports_is_published_year_index" btree (is_published, year)
+
+
+-- Table: seminars
+                                              Table "public.seminars"
+         Column         |            Type             | Collation | Nullable |               Default                
+------------------------+-----------------------------+-----------+----------+--------------------------------------
+ id                     | integer                     |           | not null | nextval('seminars_id_seq'::regclass)
+ title                  | character varying(255)      |           | not null | 
+ description            | text                        |           |          | 
+ detailed_description   | text                        |           |          | 
+ date                   | date                        |           | not null | 
+ start_time             | time without time zone      |           | not null | 
+ end_time               | time without time zone      |           | not null | 
+ location               | character varying(255)      |           |          | 
+ capacity               | integer                     |           |          | 0
+ current_participants   | integer                     |           |          | 0
+ fee                    | numeric(10,2)               |           |          | 0
+ status                 | character varying(20)       |           |          | 'draft'::character varying
+ featured_image         | character varying(255)      |           |          | 
+ application_deadline   | date                        |           |          | 
+ contact_email          | character varying(255)      |           |          | 
+ contact_phone          | character varying(255)      |           |          | 
+ notes                  | text                        |           |          | 
+ created_at             | timestamp without time zone |           |          | CURRENT_TIMESTAMP
+ updated_at             | timestamp without time zone |           |          | CURRENT_TIMESTAMP
+ membership_requirement | character varying(20)       |           | not null | 'none'::character varying
+ created_by             | bigint                      |           |          | 
+ updated_by             | bigint                      |           |          | 
+ premium_open_at        | timestamp without time zone |           |          | 
+ standard_open_at       | timestamp without time zone |           |          | 
+ free_open_at           | timestamp without time zone |           |          | 
+Indexes:
+    "seminars_pkey" PRIMARY KEY, btree (id)
+    "idx_seminars_free_open_at" btree (free_open_at)
+    "idx_seminars_premium_open_at" btree (premium_open_at)
+    "idx_seminars_standard_open_at" btree (standard_open_at)
+    "seminars_free_open_at_index" btree (free_open_at)
+    "seminars_premium_open_at_index" btree (premium_open_at)
+    "seminars_standard_open_at_index" btree (standard_open_at)
+Check constraints:
+    "seminars_status_check" CHECK (status::text = ANY (ARRAY['draft'::character varying, 'scheduled'::character varying, 'ongoing'::character varying, 'completed'::character varying, 'cancelled'::character varying]::text[]))
+Foreign-key constraints:
+    "seminars_created_by_foreign" FOREIGN KEY (created_by) REFERENCES admins(id) ON DELETE SET NULL
+    "seminars_updated_by_foreign" FOREIGN KEY (updated_by) REFERENCES admins(id) ON DELETE SET NULL
+Referenced by:
+    TABLE "seminar_favorites" CONSTRAINT "seminar_favorites_seminar_id_fkey" FOREIGN KEY (seminar_id) REFERENCES seminars(id) ON DELETE CASCADE
+    TABLE "seminar_registrations" CONSTRAINT "seminar_registrations_seminar_id_foreign" FOREIGN KEY (seminar_id) REFERENCES seminars(id) ON DELETE CASCADE
+
+
+-- Table: seminar_registrations
+                                              Table "public.seminar_registrations"
+       Column        |              Type              | Collation | Nullable |                      Default                      
+---------------------+--------------------------------+-----------+----------+---------------------------------------------------
+ id                  | bigint                         |           | not null | nextval('seminar_registrations_id_seq'::regclass)
+ seminar_id          | bigint                         |           | not null | 
+ member_id           | bigint                         |           |          | 
+ name                | character varying(100)         |           | not null | 
+ email               | character varying(255)         |           | not null | 
+ company             | character varying(200)         |           |          | 
+ phone               | character varying(20)          |           |          | 
+ special_requests    | text                           |           |          | 
+ attendance_status   | character varying(255)         |           | not null | 'registered'::character varying
+ payment_status      | character varying(255)         |           | not null | 'pending'::character varying
+ registration_number | character varying(50)          |           | not null | 
+ created_at          | timestamp(0) without time zone |           |          | 
+ updated_at          | timestamp(0) without time zone |           |          | 
+ approval_status     | character varying(20)          |           |          | 'pending'::character varying
+ approved_at         | timestamp without time zone    |           |          | 
+ rejected_at         | timestamp without time zone    |           |          | 
+ approved_by         | bigint                         |           |          | 
+ rejection_reason    | text                           |           |          | 
+Indexes:
+    "seminar_registrations_pkey" PRIMARY KEY, btree (id)
+    "idx_seminar_registrations_approved_by" btree (approved_by)
+    "idx_seminar_registrations_member_approval" btree (member_id, approval_status)
+    "idx_seminar_registrations_seminar_approval" btree (seminar_id, approval_status)
+    "seminar_registrations_email_index" btree (email)
+    "seminar_registrations_member_id_approval_status_index" btree (member_id, approval_status)
+    "seminar_registrations_member_id_index" btree (member_id)
+    "seminar_registrations_registration_number_index" btree (registration_number)
+    "seminar_registrations_registration_number_unique" UNIQUE CONSTRAINT, btree (registration_number)
+    "seminar_registrations_seminar_id_approval_status_index" btree (seminar_id, approval_status)
+    "seminar_registrations_seminar_id_index" btree (seminar_id)
+Check constraints:
+    "seminar_registrations_approval_status_check" CHECK (approval_status::text = ANY (ARRAY['pending'::character varying, 'approved'::character varying, 'rejected'::character varying]::text[]))
+    "seminar_registrations_attendance_status_check" CHECK (attendance_status::text = ANY (ARRAY['registered'::character varying, 'attended'::character varying, 'cancelled'::character varying, 'no_show'::character varying]::text[]))
+    "seminar_registrations_payment_status_check" CHECK (payment_status::text = ANY (ARRAY['pending'::character varying, 'paid'::character varying, 'refunded'::character varying]::text[]))
+Foreign-key constraints:
+    "seminar_registrations_approved_by_fkey" FOREIGN KEY (approved_by) REFERENCES admins(id) ON DELETE SET NULL
+    "seminar_registrations_member_id_foreign" FOREIGN KEY (member_id) REFERENCES members(id) ON DELETE SET NULL
+    "seminar_registrations_seminar_id_foreign" FOREIGN KEY (seminar_id) REFERENCES seminars(id) ON DELETE CASCADE
+
+
+-- Table: page_contents
+                                             Table "public.page_contents"
+      Column      |              Type              | Collation | Nullable |                  Default                  
+------------------+--------------------------------+-----------+----------+-------------------------------------------
+ id               | bigint                         |           | not null | nextval('page_contents_id_seq'::regclass)
+ page_key         | character varying(255)         |           | not null | 
+ title            | character varying(255)         |           | not null | 
+ content          | json                           |           | not null | 
+ meta_description | text                           |           |          | 
+ meta_keywords    | text                           |           |          | 
+ is_published     | boolean                        |           | not null | false
+ published_at     | timestamp(0) without time zone |           |          | 
+ updated_by       | bigint                         |           |          | 
+ created_at       | timestamp(0) without time zone |           |          | 
+ updated_at       | timestamp(0) without time zone |           |          | 
+Indexes:
+    "page_contents_pkey" PRIMARY KEY, btree (id)
+    "page_contents_page_key_unique" UNIQUE CONSTRAINT, btree (page_key)
+Foreign-key constraints:
+    "page_contents_updated_by_foreign" FOREIGN KEY (updated_by) REFERENCES users(id)
+
+
+-- Table: news
+                                           Table "public.news"
+      Column      |            Type             | Collation | Nullable |             Default              
+------------------+-----------------------------+-----------+----------+----------------------------------
+ id               | integer                     |           | not null | nextval('news_id_seq'::regclass)
+ title            | character varying(255)      |           | not null | 
+ slug             | character varying(255)      |           | not null | 
+ content          | text                        |           | not null | 
+ excerpt          | text                        |           |          | 
+ category_id      | integer                     |           |          | 
+ featured_image   | character varying(255)      |           |          | 
+ is_important     | boolean                     |           |          | false
+ is_published     | boolean                     |           |          | false
+ is_featured      | boolean                     |           |          | false
+ view_count       | integer                     |           |          | 0
+ tags             | text                        |           |          | 
+ meta_description | text                        |           |          | 
+ published_at     | timestamp without time zone |           |          | 
+ created_at       | timestamp without time zone |           |          | CURRENT_TIMESTAMP
+ updated_at       | timestamp without time zone |           |          | CURRENT_TIMESTAMP
+Indexes:
+    "news_pkey" PRIMARY KEY, btree (id)
+    "news_slug_key" UNIQUE CONSTRAINT, btree (slug)
+Foreign-key constraints:
+    "news_category_id_fkey" FOREIGN KEY (category_id) REFERENCES news_categories(id) ON DELETE SET NULL
+
+
+-- Table: publications
+                                             Table "public.publications"
+      Column      |              Type              | Collation | Nullable |                 Default                  
+------------------+--------------------------------+-----------+----------+------------------------------------------
+ id               | bigint                         |           | not null | nextval('publications_id_seq'::regclass)
+ title            | character varying(255)         |           | not null | 
+ description      | text                           |           | not null | 
+ category         | character varying(255)         |           | not null | 
+ type             | character varying(255)         |           | not null | 
+ publication_date | date                           |           | not null | 
+ issue_number     | character varying(255)         |           |          | 
+ author           | character varying(255)         |           |          | 
+ pages            | integer                        |           |          | 
+ file_url         | text                           |           |          | 
+ cover_image      | text                           |           |          | 
+ price            | numeric(10,2)                  |           |          | 
+ tags             | text                           |           |          | 
+ is_published     | boolean                        |           | not null | false
+ is_downloadable  | boolean                        |           | not null | false
+ members_only     | boolean                        |           | not null | false
+ download_count   | integer                        |           | not null | 0
+ view_count       | integer                        |           | not null | 0
+ created_at       | timestamp(0) without time zone |           |          | 
+ updated_at       | timestamp(0) without time zone |           |          | 
+Indexes:
+    "publications_pkey" PRIMARY KEY, btree (id)
+
+

@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Quick CMS Test Data</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: 0 auto; }
+        .button { background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin: 10px; }
+        .button:hover { background: #0056b3; }
+        .output { background: #f8f9fa; padding: 15px; margin: 10px 0; border-radius: 5px; white-space: pre-line; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <h1>🎯 CMS Test Data Quick Setup</h1>
+    <p>This page adds test data to localStorage and opens the HomePage to verify.</p>
+    
+    <button class="button" onclick="addDataAndOpen()">📊 Add Data & Open HomePage</button>
+    <button class="button" onclick="viewData()">👀 View Current Data</button>
+    <button class="button" onclick="clearData()">🗑️ Clear Data</button>
+    
+    <div id="output"></div>
+
+    <script>
+        const testData = {
+            seminars: [
+                {
+                    id: 1,
+                    title: '採用力強化！経営・人事向け　面接官トレーニングセミナー',
+                    description: '優秀な人材を見極め、獲得するための面接技術を習得できるセミナーです。',
+                    date: '2025-09-15',
+                    start_time: '14:00',
+                    end_time: '17:00',
+                    location: 'ちくぎん地域経済研究所 会議室A',
+                    capacity: 30,
+                    fee: 5000,
+                    status: 'ongoing'
+                },
+                {
+                    id: 2,
+                    title: 'DX推進セミナー～デジタル変革の実践的アプローチ～',
+                    description: 'デジタルトランスフォーメーションの基礎から実践まで学べるセミナーです。',
+                    date: '2025-09-22',
+                    start_time: '13:00',
+                    end_time: '16:00',
+                    location: 'オンライン開催（Zoom）',
+                    capacity: 100,
+                    fee: 3000,
+                    status: 'scheduled'
+                },
+                {
+                    id: 3,
+                    title: '九州地域経済フォーラム2025',
+                    description: '九州地域の経済動向と今後の展望について専門家が解説します。',
+                    date: '2025-10-08',
+                    start_time: '10:00',
+                    end_time: '16:30',
+                    location: 'アクロス福岡シンフォニーホール',
+                    capacity: 200,
+                    fee: 8000,
+                    status: 'scheduled'
+                },
+                {
+                    id: 4,
+                    title: '中小企業のためのAI活用セミナー',
+                    description: 'AI技術を中小企業でも実践的に活用する方法を学べるセミナーです。',
+                    date: '2025-10-15',
+                    start_time: '14:00',
+                    end_time: '17:30',
+                    location: 'ちくぎん地域経済研究所 大会議室',
+                    capacity: 50,
+                    fee: 4000,
+                    status: 'scheduled'
+                },
+                {
+                    id: 5,
+                    title: '事業承継セミナー～次世代への円滑な承継のために～',
+                    description: '事業承継の計画策定から実行まで、成功のポイントを解説します。',
+                    date: '2025-08-20',
+                    start_time: '13:30',
+                    end_time: '16:00',
+                    location: 'ちくぎん地域経済研究所 会議室B',
+                    capacity: 40,
+                    fee: 6000,
+                    status: 'completed'
+                }
+            ],
+            publications: [
+                {
+                    id: 1,
+                    title: 'HOT Information Vol.325',
+                    description: '九州地域の経済動向を詳細に分析した月刊レポート。',
+                    publishedDate: '2025-08-25',
+                    category: 'monthly',
+                    fileUrl: '/files/hot-info-325.pdf'
+                },
+                {
+                    id: 2,
+                    title: 'HOT Information Vol.324',
+                    description: '地域金融機関の融資動向と中小企業の資金調達環境について特集。',
+                    publishedDate: '2025-07-28',
+                    category: 'monthly',
+                    fileUrl: '/files/hot-info-324.pdf'
+                },
+                {
+                    id: 3,
+                    title: '経営参考BOOK vol.58',
+                    description: '持続可能な経営戦略とSDGsの実践について解説。',
+                    publishedDate: '2025-08-15',
+                    category: 'book',
+                    fileUrl: '/files/management-book-58.pdf'
+                },
+                {
+                    id: 4,
+                    title: '経営参考BOOK vol.57',
+                    description: 'デジタルマーケティングの最新動向と実践手法を特集。',
+                    publishedDate: '2025-07-10',
+                    category: 'book',
+                    fileUrl: '/files/management-book-57.pdf'
+                },
+                {
+                    id: 5,
+                    title: '九州経済白書2025',
+                    description: '九州地域経済の包括的な分析レポート。',
+                    publishedDate: '2025-06-01',
+                    category: 'report',
+                    fileUrl: '/files/kyushu-economic-whitepaper-2025.pdf'
+                }
+            ],
+            notices: [
+                {
+                    id: 1,
+                    title: '年末年始休業のお知らせ',
+                    content: '2025年12月28日（土）から2026年1月5日（日）まで年末年始休業とさせていただきます。',
+                    date: '2025-08-20',
+                    category: 'notice',
+                    isImportant: true
+                },
+                {
+                    id: 2,
+                    title: 'ホームページリニューアルのお知らせ',
+                    content: '当研究所のホームページをより使いやすくリニューアルいたしました。',
+                    date: '2025-08-01',
+                    category: 'notice',
+                    isImportant: false
+                },
+                {
+                    id: 3,
+                    title: 'セミナー申込システムメンテナンスのお知らせ',
+                    content: '8月30日（金）午後11時から翌31日（土）午前6時まで、セミナー申込システムのメンテナンスを実施いたします。',
+                    date: '2025-08-25',
+                    category: 'maintenance',
+                    isImportant: true
+                },
+                {
+                    id: 4,
+                    title: '九州経済フォーラム2025 早期申込割引のご案内',
+                    content: '10月8日開催の九州経済フォーラム2025の早期申込割引を実施中です。',
+                    date: '2025-08-15',
+                    category: 'campaign',
+                    isImportant: false
+                },
+                {
+                    id: 5,
+                    title: '新刊「経営参考BOOK vol.58」発刊のお知らせ',
+                    content: '持続可能な経営戦略とSDGsの実践をテーマにした新刊を発刊いたしました。',
+                    date: '2025-08-16',
+                    category: 'publication',
+                    isImportant: false
+                }
+            ],
+            media: [
+                {
+                    id: 1,
+                    title: '九州経済フォーラム2024の様子',
+                    url: '/media/kyushu-forum-2024.jpg',
+                    type: 'image',
+                    uploadedDate: '2025-07-01'
+                }
+            ],
+            members: [
+                {
+                    id: 1,
+                    name: '田中一郎',
+                    email: 'tanaka@example.com',
+                    company: '株式会社九州テクノロジー',
+                    membershipType: 'premium',
+                    joinedDate: '2024-03-15',
+                    status: 'active'
+                }
+            ],
+            pages: {
+                about: {
+                    title: 'ちくぎん地域経済研究所について',
+                    content: '筑邦銀行のシンクタンクとして設立された地域経済研究所です。',
+                    lastUpdated: '2025-08-01'
+                }
+            }
+        };
+
+        const STORAGE_KEY = 'cms_mock_data';
+
+        function showOutput(message, type = 'output') {
+            document.getElementById('output').innerHTML = `<div class="${type}">${message}</div>`;
+        }
+
+        function addDataAndOpen() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(testData));
+                const seminarsOngoing = testData.seminars.filter(s => s.status === 'ongoing').length;
+                const seminarsScheduled = testData.seminars.filter(s => s.status === 'scheduled').length;
+                const noticesImportant = testData.notices.filter(n => n.isImportant).length;
+                
+                showOutput(`✅ テストデータが正常に追加されました！
+
+📊 データサマリー:
+- セミナー: ${testData.seminars.length}件 (実施中:${seminarsOngoing}, 予定:${seminarsScheduled})
+- 刊行物: ${testData.publications.length}件
+- お知らせ: ${testData.notices.length}件 (重要:${noticesImportant}件)
+
+🌐 ホームページを開いています...`, 'success');
+
+                // Open HomePage
+                setTimeout(() => {
+                    window.open('http://localhost:8081', '_blank');
+                }, 2000);
+                
+            } catch (error) {
+                showOutput(`❌ エラーが発生しました: ${error.message}`, 'error');
+            }
+        }
+
+        function viewData() {
+            try {
+                const currentData = localStorage.getItem(STORAGE_KEY);
+                if (currentData) {
+                    const data = JSON.parse(currentData);
+                    showOutput(`📋 現在のローカルストレージデータ:
+
+• セミナー: ${data.seminars?.length || 0} 件
+• 刊行物: ${data.publications?.length || 0} 件  
+• お知らせ: ${data.notices?.length || 0} 件
+• メディア: ${data.media?.length || 0} 件
+• 会員: ${data.members?.length || 0} 件
+• ページ: ${Object.keys(data.pages || {}).length} 件
+
+データは正常に保存されています。`, 'output');
+                } else {
+                    showOutput('📋 ローカルストレージにデータがありません', 'output');
+                }
+            } catch (error) {
+                showOutput(`❌ エラーが発生しました: ${error.message}`, 'error');
+            }
+        }
+
+        function clearData() {
+            if (confirm('本当にすべてのデータを削除しますか？')) {
+                try {
+                    localStorage.removeItem(STORAGE_KEY);
+                    showOutput('🗑️ すべてのデータが削除されました', 'success');
+                } catch (error) {
+                    showOutput(`❌ エラーが発生しました: ${error.message}`, 'error');
+                }
+            }
+        }
+
+        // Initialize
+        window.onload = function() {
+            viewData();
+        };
+    </script>
+</body>
+</html>
